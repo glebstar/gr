@@ -23,7 +23,8 @@ class GameResultsTest extends TestCase
     {
         $member = Member::factory()->make();
 
-        $response = $this->postJson(route('add_results'), ['email' => $member->email, 'milliseconds' => 1000]);
+        $this->postJson(route('add_results'), ['email' => $member->email, 'milliseconds' => 1000]);
+        $response = $this->postJson(route('add_results'), ['email' => $member->email, 'milliseconds' => 900]);
         $response
             ->assertStatus(200)
             ->assertJson([
@@ -55,7 +56,7 @@ class GameResultsTest extends TestCase
         $response
             ->assertStatus(200)
             ->assertJson([
-                'data' => ['self' => ['email' => $email]],
+                'data' => ['self' => ['email' => $email, 'milliseconds' => 900]],
             ]);
     }
 }

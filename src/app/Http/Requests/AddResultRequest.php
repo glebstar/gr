@@ -23,7 +23,7 @@ class AddResultRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => 'nullable|sometimes|unique:members',
+            'email' => 'nullable|sometimes',
             'milliseconds' => 'required|integer',
         ];
     }

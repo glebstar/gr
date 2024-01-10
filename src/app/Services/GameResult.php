@@ -19,15 +19,11 @@ class GameResult
     public function addResult(Request $request): void
     {
         if ($request->email) {
-            Member::factory()
-                ->state([
-                    'email' => $request->email,
-                ])
-                ->has(Result::factory()
-                    ->state([
-                        'milliseconds' => $request->milliseconds,
-                    ]))
-                ->create();
+            /**
+             * @var Member $member
+             */
+            $member = Member::firstOrCreate(['email' => $request->email]);
+            $member->results()->create(['milliseconds' => $request->milliseconds]);
         } else {
             Result::create(['milliseconds' => $request->milliseconds]);
         }
@@ -43,14 +39,26 @@ class GameResult
     {
         DB::select("set @row:=0");
 
-        $top = DB::table('members', 'm')
-            ->selectRaw('@row:=@row+1 as place, results.milliseconds, m.email')
-            ->leftJoin('results', 'm.id', '=', 'results.member_id')
-            ->whereNotNull('results.member_id')
-            ->orderBy('results.milliseconds')
-            ->orderBy('results.id')
-            ->limit(10)
-            ->get();
+        //$top = DB::table('members', 'm')
+        //    ->selectRaw('@row:=@row+1 as place, results.milliseconds, m.email')
+        //    ->leftJoin('results', 'm.id', '=', 'results.member_id')
+        //    ->whereNotNull('results.member_id')
+        //    ->orderBy('results.milliseconds')
+        //    ->orderBy('results.id')
+        //    ->limit(10)
+        //    ->get();
+
+        $top = DB::select('
+        SELECT @row:=@row+1 as place, j.milliseconds, j.email
+        FROM (
+            SELECT m.email, MIN(r.milliseconds) as milliseconds
+            FROM members m
+            JOIN results r ON m.id = r.member_id
+            GROUP BY m.email
+        ) j
+        ORDER by j.milliseconds
+        LIMIT 10
+        ');
 
         foreach ($top as $item) {
             $item->email = hideEndEmail($item->email);
