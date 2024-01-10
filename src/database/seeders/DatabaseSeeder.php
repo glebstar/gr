@@ -21,13 +21,8 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
-        //Result::factory()
-        //    ->count(10)
-        //    ->for(Member::factory()->create())
-        //    ->create();
-
         Member::factory()
-            ->count(100)
+            ->count(10000)
             ->has(Result::factory())
             ->create();
     }

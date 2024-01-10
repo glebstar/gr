@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->bigInteger('member_id')->nullable();
             $table->integer('milliseconds');
+            //$table->index('member_id');
             $table->index('milliseconds');
             $table->timestamps();
         });

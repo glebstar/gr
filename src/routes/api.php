@@ -21,5 +21,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('add_results', [
     GameResultsController::class,
-    'addResult'
+    'addResult',
 ])->name('add_results');
+
+Route::get('get_results', [
+    GameResultsController::class,
+    'getResults',
+])->name('get_results');

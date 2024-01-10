@@ -19,7 +19,7 @@ class GameResultsTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_add_result(): void
+    public function test_add_result(): string
     {
         $member = Member::factory()->make();
 
@@ -35,6 +35,27 @@ class GameResultsTest extends TestCase
             ->assertStatus(200)
             ->assertJson([
                 'status' => 'ok',
+            ]);
+
+        return $member->email;
+    }
+
+    /**
+     * @param $email
+     * @return void
+     *
+     * @depends test_add_result
+     */
+    public function test_get_results($email): void
+    {
+        $response = $this->getJson(route('get_results'));
+        $response->assertStatus(200);
+
+        $response = $this->getJson(route('get_results') . '?email=' . $email);
+        $response
+            ->assertStatus(200)
+            ->assertJson([
+                'data' => ['self' => ['email' => $email]],
             ]);
     }
 }
